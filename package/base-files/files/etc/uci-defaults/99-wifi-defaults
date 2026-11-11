@@ -1,0 +1,19 @@
+#!/bin/sh
+# QWRT 默认无线：2.4G=QWRT2.4G 5G=QWRT5G，WPA2，密码 12345678
+[ -f /etc/config/wireless ] || wifi config >/dev/null 2>&1
+n=0
+while uci -q get "wireless.@wifi-iface[$n]" >/dev/null 2>&1; do
+	dev=$(uci -q get "wireless.@wifi-iface[$n].device")
+	band=$(uci -q get "wireless.$dev.band")
+	case "$band" in
+		2g) ssid="QWRT2.4G" ;;
+		5g) ssid="QWRT5G" ;;
+		*)  ssid="QWRT" ;;
+	esac
+	uci -q set "wireless.@wifi-iface[$n].ssid=$ssid"
+	uci -q set "wireless.@wifi-iface[$n].encryption=psk2"
+	uci -q set "wireless.@wifi-iface[$n].key=12345678"
+	n=$((n+1))
+done
+uci -q commit wireless
+exit 0

@@ -1,0 +1,13 @@
+#!/bin/sh
+# QWRT: 追加定制 CSS 到 design 主题；替换 Dockerman 概览视图（去掉 Environment/Runtimes）
+CSS=/www/luci-static/design/css/style.css
+EXTRA=/etc/qwrt/design-extra.css
+if [ -f "$CSS" ] && [ -f "$EXTRA" ] && ! grep -q 'WRT-AUTOREBoot-FIX' "$CSS"; then
+	cat "$EXTRA" >> "$CSS"
+fi
+DOV=/www/luci-static/resources/view/dockerman/overview.js
+DNEW=/etc/qwrt/dockerman-overview.js
+if [ -f "$DOV" ] && [ -f "$DNEW" ] && grep -q "TableSection,'ib'" "$DOV"; then
+	cp "$DNEW" "$DOV"
+fi
+exit 0
